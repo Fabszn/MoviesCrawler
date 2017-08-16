@@ -1,7 +1,6 @@
 package controllers
 
 import java.net.URL
-import javax.inject._
 
 import model.Item
 import play.api.libs.json.Json
@@ -14,7 +13,6 @@ import scala.xml.{Elem, XML => xmlreader}
   * This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
   */
-@Singleton
 class HomeController(ws: WSClient) extends Controller {
 
   /**
@@ -26,7 +24,7 @@ class HomeController(ws: WSClient) extends Controller {
     */
   def index() = Action {
 
-    val stream: Elem = xmlreader.load(new URL("https://webnext.fr/epg_cache/programme-tv-rss_2017-08-15.xml"))
+    val stream: Elem = xmlreader.load(new URL("https://webnext.fr/epg_cache/programme-tv-rss_2017-08-16.xml"))
 
 
     Ok(Json.toJson(datas(stream).filter(i => i.category == "Film"))
@@ -38,6 +36,11 @@ class HomeController(ws: WSClient) extends Controller {
   def datas(e: Elem): List[Item] = (e \\ "item").foldLeft(List[Item]())((items, node) => {
     Item.fromXml(node) :: items
   })
+
+
+  def testVue = Action {
+    Ok(Json.toJson("Tout roule")).withHeaders(("Access-Control-Allow-Origin", "*"))
+  }
 
 }
 
